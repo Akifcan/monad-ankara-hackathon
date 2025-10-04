@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { BrowserProvider, ContractFactory } from "ethers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,11 +19,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import OracleArtifact from "../../contracts/artifacts/contracts/Oracle.sol/Oracle.json";
 
 export function OracleForm() {
   const [url, setUrl] = useState("");
   const [interval, setInterval] = useState("");
   const [errors, setErrors] = useState({ url: "" });
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [deployedAddress, setDeployedAddress] = useState<string | null>(null);
 
   const validateUrl = (value: string) => {
     if (!value) {
@@ -36,7 +40,7 @@ export function OracleForm() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const urlError = validateUrl(url);
@@ -46,11 +50,54 @@ export function OracleForm() {
       return;
     }
 
+    if (!interval) {
+      alert("Please select an update interval");
+      return;
+    }
+
     setErrors({ url: "" });
-    console.log({
-      url,
-      interval,
-    });
+
+    try {
+      setIsDeploying(true);
+
+      // Get provider and signer
+      if (typeof window.ethereum === "undefined") {
+        alert("Please install MetaMask!");
+        return;
+      }
+
+      const provider = new BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+
+      // Create contract factory
+      const factory = new ContractFactory(
+        OracleArtifact.abi,
+        OracleArtifact.bytecode,
+        signer
+      );
+
+      // Deploy contract
+      console.log("Deploying Oracle contract...");
+      const contract = await factory.deploy(url, interval);
+
+      console.log("Waiting for deployment...");
+      await contract.waitForDeployment();
+
+      const address = await contract.getAddress();
+      console.log("Oracle deployed at:", address);
+
+      setDeployedAddress(address);
+      alert(`Oracle deployed successfully at: ${address}`);
+
+      // Reset form
+      setUrl("");
+      setInterval("");
+    } catch (error) {
+      console.error("Deployment failed:", error);
+      alert("Failed to deploy oracle. Please check console for details.");
+    } finally {
+      setIsDeploying(false);
+    }
   };
 
   return (
@@ -72,6 +119,7 @@ export function OracleForm() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className={errors.url ? "border-red-500" : ""}
+              disabled={isDeploying}
             />
             {errors.url && (
               <p className="text-sm text-red-500">{errors.url}</p>
@@ -80,7 +128,7 @@ export function OracleForm() {
 
           <div className="space-y-2">
             <Label htmlFor="interval">Update Interval</Label>
-            <Select value={interval} onValueChange={setInterval}>
+            <Select value={interval} onValueChange={setInterval} disabled={isDeploying}>
               <SelectTrigger id="interval">
                 <SelectValue placeholder="Select an interval" />
               </SelectTrigger>
@@ -94,9 +142,28 @@ export function OracleForm() {
             </Select>
           </div>
 
-          <Button type="submit" className="w-full">
-            Create Oracle
+          <Button type="submit" className="w-full" disabled={isDeploying}>
+            {isDeploying ? "Deploying Oracle..." : "Create Oracle"}
           </Button>
+
+          {deployedAddress && (
+            <div className="rounded-lg bg-green-50 p-4">
+              <p className="text-sm font-medium text-green-900">
+                ✅ Oracle deployed successfully!
+              </p>
+              <p className="mt-1 font-mono text-xs text-green-700 break-all">
+                {deployedAddress}
+              </p>
+              <a
+                href={`https://testnet.monadscan.com/address/${deployedAddress}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-green-700 hover:text-green-800 underline"
+              >
+                View on Monad Explorer →
+              </a>
+            </div>
+          )}
         </form>
       </CardContent>
     </Card>
