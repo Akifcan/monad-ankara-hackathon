@@ -109,7 +109,6 @@ Unlike traditional blockchains that process one transaction at a time, Monad can
 - **Tailwind CSS**: Utility-first styling
 - **shadcn/ui**: Beautiful UI components
 - **ethers.js**: Blockchain interactions
-- **Leaflet**: Map visualization
 
 ---
 
@@ -179,14 +178,9 @@ Use: Sports betting, fantasy leagues
 ## 🛠️ Tech Stack
 
 - **Blockchain**: Monad Testnet
-- **Smart Contracts**: Solidity ^0.8.20
 - **Frontend**: Next.js 15, React 19, TypeScript
 - **Styling**: Tailwind CSS 4, shadcn/ui
 - **Web3**: ethers.js v6
-- **Backend**: Next.js API Routes
-- **HTTP Client**: Axios
-- **Maps**: Leaflet, React-Leaflet
-- **Font**: Inter (Google Fonts)
 
 ---
 
