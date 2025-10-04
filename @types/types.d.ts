@@ -37,3 +37,8 @@ interface MapProps {
   coords?: Coordinate[];
 }
 
+interface CronTypesProps {
+  id: number
+  address: string
+  frequency: '1m' | '10s' | '30s'
+ }
