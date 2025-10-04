@@ -15,6 +15,7 @@ export default function Home() {
         {walletAddress && <OracleForm />}
         <OracleInfo />
         <img src="/logo.svg" alt="Monoracle Logo" width={300} height={300} />
+        <p>Made with ❤️ by <b>Overblock</b></p>
       </div>
     </div>
   );

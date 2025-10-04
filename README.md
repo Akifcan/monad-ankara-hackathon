@@ -1,4 +1,4 @@
-![alt text](public/logo.svg)
+![logo](public/logo2.svg)
 
 # Monoracle - No-Code Oracle Platform
 
@@ -263,5 +263,5 @@ Built with ❤️ for **Monad Blitz Hackathon** in Ankara
 
 *Built on Monad - The Parallel Execution Blockchain* ⚡
 
-![alt text](public/schema.png)
-![alt text](public/logo.svg)
+![schema](public/schema.png)
+![logo](public/logo2.svg)
