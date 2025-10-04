@@ -6,8 +6,6 @@ export async function GET(
 ) {
   const { oracle: oracleAddress } = await context.params;
 
-  console.log(process.env.MASTER_WALLET_PRIVATE_KEY);
-
   return NextResponse.json({
     success: true,
     oracleAddress: oracleAddress,
