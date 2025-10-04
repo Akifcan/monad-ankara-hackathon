@@ -88,6 +88,8 @@ export function OracleForm() {
 
       setDeployedAddress(address);
 
+      await fetch(`/api/oracle/${address}`)
+
       // Reset form
       setUrl("");
       setInterval("");
