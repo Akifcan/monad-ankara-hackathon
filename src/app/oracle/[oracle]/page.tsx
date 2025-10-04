@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import OracleArtifact from "../../../contracts/artifacts/contracts/Oracle.sol/Oracle.json";
+import OracleArtifact from "../../../../contracts/artifacts/contracts/Oracle.sol/Oracle.json";
 
 interface Verification {
   txHash: string;
