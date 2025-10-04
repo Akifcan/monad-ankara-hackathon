@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import OracleArtifact from "../../../contracts/artifacts/contracts/Oracle.sol/Oracle.json";
+import OracleArtifact from "@/assets/Oracle.json";
 import { BrowserProvider, Contract } from "ethers";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

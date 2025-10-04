@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { JsonRpcProvider, Wallet, Contract } from "ethers";
-import OracleArtifact from "../../../../../contracts/artifacts/contracts/Oracle.sol/Oracle.json";
+import OracleArtifact from "@/assets/Oracle.json";
 import axios from "axios";
 
 const MONAD_TESTNET_RPC = process.env.MONAD_RPC_URL;
