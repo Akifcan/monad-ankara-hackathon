@@ -14,17 +14,6 @@ const customIcon = L.icon({
   popupAnchor: [0, -32]
 });
 
-interface Coordinate {
-  id: number;
-  lat: number;
-  long: number;
-  lastLocationDescription: string;
-}
-
-interface MapProps {
-  coords?: Coordinate[];
-}
-
 function MapUpdater({ center }: { center: [number, number] }) {
   const map = useMap();
 

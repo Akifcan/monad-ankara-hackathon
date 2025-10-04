@@ -7,17 +7,7 @@ import { BrowserProvider, Contract } from "ethers";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const DEMO_CONTRACT = "0xdC736F48f1Db0223261b7079AFB6877365d511Cd";
-
-// Dynamically import Map to avoid SSR issues with Leaflet
-const Map = dynamic(() => import("@/components/Map"), {
-  ssr: false,
-  loading: () => (
-    <div className="h-96 w-full flex items-center justify-center bg-neutral-100 rounded-lg">
-      Loading map...
-    </div>
-  ),
-});
+const DEMO_CONTRACT = "0x47ca3400379Bf50e115996ab2EcBDda52dBF8952";
 
 export default function Demo() {
   const [lastUpdate, setLastUpdate] = useState<string>("");

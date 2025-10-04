@@ -11,10 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-interface WalletConnectProps {
-  onWalletChange: (address: string | null) => void;
-}
-
 export function WalletConnect({ onWalletChange }: WalletConnectProps) {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);

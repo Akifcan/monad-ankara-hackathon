@@ -13,3 +13,27 @@ interface OracleData {
   verifications: Verification[];
 }
 
+
+interface LocationData {
+  id: number;
+  lat: number;
+  long: number;
+  lastLocationDescription: string;
+}
+
+interface WalletConnectProps {
+  onWalletChange: (address: string | null) => void;
+}
+
+
+interface Coordinate {
+  id: number;
+  lat: number;
+  long: number;
+  lastLocationDescription: string;
+}
+
+interface MapProps {
+  coords?: Coordinate[];
+}
+

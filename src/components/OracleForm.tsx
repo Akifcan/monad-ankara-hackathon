@@ -88,6 +88,14 @@ export function OracleForm() {
 
       setDeployedAddress(address);
 
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cron-oracle`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          "address": address,
+          "frequency": interval
+        })
+      })
       await fetch(`/api/oracle/${address}`)
 
       // Reset form
@@ -134,11 +142,8 @@ export function OracleForm() {
                 <SelectValue placeholder="Select an interval" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="10s">Every 10 seconds</SelectItem>
+                <SelectItem value="30s">Every 30 seconds</SelectItem>
                 <SelectItem value="1m">Every 1 minute</SelectItem>
-                <SelectItem value="10m">Every 10 minutes</SelectItem>
-                <SelectItem value="1d">Every 1 day</SelectItem>
-                <SelectItem value="5d">Every 5 days</SelectItem>
               </SelectContent>
             </Select>
           </div>
