@@ -2,6 +2,15 @@
 pragma solidity ^0.8.20;
 
 contract Oracle {
+    // Master wallet address (backend wallet for automated updates)
+    address public constant MASTER_WALLET = 0xF739AF0C0cC448B41c47cc38070f10a0B4BE50b4;
+
+    // Verification struct
+    struct Verification {
+        bytes32 txHash;
+        string data;
+    }
+
     // Oracle creator
     address public createdBy;
 
@@ -14,19 +23,22 @@ contract Oracle {
     // Dynamic data stored as string (can be JSON)
     string public dynamicData;
 
-    // Array of verification transaction hashes
-    bytes32[] public verifications;
+    // Array of verifications (tx hash + data)
+    Verification[] public verifications;
 
     // Timestamp of last update
     uint256 public lastUpdateTime;
+
+    // Validation status
+    bool public isValidated;
 
     // Events
     event DataUpdated(string newData, uint256 timestamp, bytes32 txHash);
     event VerificationAdded(bytes32 txHash);
 
-    // Modifier to restrict access to creator only
-    modifier onlyCreator() {
-        require(msg.sender == createdBy, "Only creator can call this function");
+    // Modifier to restrict access to master wallet only
+    modifier onlyMasterWallet() {
+        require(msg.sender == MASTER_WALLET, "Only master wallet can call this function");
         _;
     }
 
@@ -39,30 +51,35 @@ contract Oracle {
         createdBy = msg.sender;
         apiUrl = _apiUrl;
         updateInterval = _updateInterval;
-        lastUpdateTime = block.timestamp;
+        // lastUpdateTime will be 0 until first update
     }
 
     /**
      * @dev Update the oracle data
      * @param _newData The new data to store
      */
-    function updateData(string memory _newData) public onlyCreator {
+    function updateData(string memory _newData) public onlyMasterWallet {
         dynamicData = _newData;
         lastUpdateTime = block.timestamp;
 
         // Create verification hash from block data
         bytes32 txHash = keccak256(abi.encodePacked(block.timestamp, msg.sender, _newData));
-        verifications.push(txHash);
+
+        // Add verification with tx hash and data
+        verifications.push(Verification({
+            txHash: txHash,
+            data: _newData
+        }));
 
         emit DataUpdated(_newData, block.timestamp, txHash);
         emit VerificationAdded(txHash);
     }
 
     /**
-     * @dev Get all verification hashes
-     * @return Array of verification transaction hashes
+     * @dev Get all verifications
+     * @return Array of verification structs (txHash + data)
      */
-    function getVerifications() public view returns (bytes32[] memory) {
+    function getVerifications() public view returns (Verification[] memory) {
         return verifications;
     }
 
@@ -77,9 +94,9 @@ contract Oracle {
     /**
      * @dev Get a specific verification by index
      * @param index The index of the verification
-     * @return The verification hash at that index
+     * @return The verification struct at that index (txHash + data)
      */
-    function getVerification(uint256 index) public view returns (bytes32) {
+    function getVerification(uint256 index) public view returns (Verification memory) {
         require(index < verifications.length, "Index out of bounds");
         return verifications[index];
     }
