@@ -77,13 +77,6 @@ Unlike traditional blockchains that process one transaction at a time, Monad can
                              ↑
                              │
                      ┌──────────────┐
-                     │   Backend    │
-                     │   (Next.js   │
-                     │    API)      │
-                     └──────────────┘
-                             ↑
-                             │
-                     ┌──────────────┐
                      │  External    │
                      │     API      │
                      └──────────────┘
