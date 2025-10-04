@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { JsonRpcProvider, Wallet, Contract } from "ethers";
 import OracleArtifact from "../../../../../contracts/artifacts/contracts/Oracle.sol/Oracle.json";
+import axios from "axios";
 
 const MONAD_TESTNET_RPC = process.env.MONAD_RPC_URL;
 const PRIVATE_KEY = process.env.MASTER_WALLET_PRIVATE_KEY;
@@ -19,21 +20,26 @@ export async function GET(
       );
     }
 
-    // Create provider and wallet
     const provider = new JsonRpcProvider(MONAD_TESTNET_RPC);
     const wallet = new Wallet(PRIVATE_KEY, provider);
-
-    // Create contract instance
     const contract = new Contract(oracleAddress, OracleArtifact.abi, wallet);
-
-    // Get API URL from contract
     const apiUrl = await contract.apiUrl();
+
+    // Fetch data from API
+    const apiResponse = await axios.get(apiUrl);
+    const data = JSON.stringify(apiResponse.data);
+
+    // Update contract with new data
+    const tx = await contract.updateData(data);
+    await tx.wait();
 
     return NextResponse.json({
       success: true,
-      oracleAddress: oracleAddress,
-      apiUrl: apiUrl,
-      message: `Oracle API URL retrieved successfully`
+      oracleAddress,
+      apiUrl,
+      data,
+      transactionHash: tx.hash,
+      message: "Oracle data updated successfully"
     });
   } catch (error) {
     console.error("Error fetching oracle data:", error);
