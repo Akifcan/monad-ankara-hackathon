@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import OracleArtifact from "../../../contracts/artifacts/contracts/Oracle.sol/Oracle.json";
 import { BrowserProvider, Contract } from "ethers";
 import { Button } from "@/components/ui/button";
@@ -9,9 +8,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const DEMO_CONTRACT = "0x47ca3400379Bf50e115996ab2EcBDda52dBF8952";
 
-export default function Demo() {
+interface MatchData {
+  id: number;
+  score1: number;
+  score2: number;
+}
+
+export default function Demo2() {
   const [lastUpdate, setLastUpdate] = useState<string>("");
-  const [coords, setCoords] = useState<LocationData[]>([]);
+  const [matchData, setMatchData] = useState<MatchData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleOracleData = async () => {
@@ -27,10 +32,9 @@ export default function Demo() {
 
       const [, , , lastUpdateTime] = await contract.getOracleInfo();
       const data = await contract.getCurrentData();
+      const scores = JSON.parse(data) as MatchData;
 
-      const parsedCoords = JSON.parse(data) as LocationData[];
-
-      setCoords(parsedCoords);
+      setMatchData(scores);
       setLastUpdate(
         new Date(Number(lastUpdateTime) * 1000).toLocaleString()
       );
@@ -52,8 +56,8 @@ export default function Demo() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Oracle Demo</h1>
-            <p className="text-neutral-600">Real-time location data visualization</p>
+            <h1 className="text-3xl font-bold">Match Scoreboard</h1>
+            <p className="text-neutral-600">Live match results from oracle</p>
           </div>
           <Button onClick={handleOracleData} disabled={isLoading}>
             {isLoading ? "Refreshing..." : "🔄 Refresh Data"}
@@ -72,45 +76,76 @@ export default function Demo() {
           </CardContent>
         </Card>
 
-        {/* Map */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Location Map</CardTitle>
+        {/* Scoreboard */}
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-[#836EF9] to-purple-600 text-white">
+            <CardTitle className="text-center text-2xl">El Clásico</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="w-full h-[300px]">
-                <Map coords={coords} />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Coordinates List */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Locations ({coords.length})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {coords.length === 0 ? (
-              <p className="text-sm text-neutral-500">No locations available</p>
-            ) : (
-              <div className="space-y-3">
-                {coords.map((location) => (
-                  <div
-                    key={location.id}
-                    className="flex items-center justify-between rounded-lg border border-neutral-200 p-3"
-                  >
-                    <div>
-                      <p className="font-medium">{location.lastLocationDescription}</p>
-                      <p className="text-sm text-neutral-500">
-                        ID: {location.id} | Lat: {location.lat} | Long: {location.long}
-                      </p>
+          <CardContent className="p-8">
+            {matchData ? (
+              <div className="flex items-center justify-center gap-8">
+                {/* Real Madrid */}
+                <div className="flex-1 text-center">
+                  <div className="mb-4 flex justify-center">
+                    <div className="h-24 w-24 rounded-full bg-white p-4 shadow-lg flex items-center justify-center">
+                      <span className="text-4xl">⚪</span>
                     </div>
                   </div>
-                ))}
+                  <h3 className="text-2xl font-bold text-neutral-800">Real Madrid</h3>
+                  <div className="mt-4 text-6xl font-bold text-[#836EF9]">
+                    {matchData.score1}
+                  </div>
+                </div>
+
+                {/* VS Separator */}
+                <div className="flex flex-col items-center">
+                  <span className="text-2xl font-bold text-neutral-400">VS</span>
+                  <div className="mt-2 h-px w-16 bg-neutral-300"></div>
+                </div>
+
+                {/* Barcelona */}
+                <div className="flex-1 text-center">
+                  <div className="mb-4 flex justify-center">
+                    <div className="h-24 w-24 rounded-full bg-[#A50044] p-4 shadow-lg flex items-center justify-center">
+                      <span className="text-4xl">🔴</span>
+                    </div>
+                  </div>
+                  <h3 className="text-2xl font-bold text-neutral-800">Barcelona</h3>
+                  <div className="mt-4 text-6xl font-bold text-[#836EF9]">
+                    {matchData.score2}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-neutral-500">No match data available</p>
               </div>
             )}
           </CardContent>
         </Card>
+
+        {/* Match Details */}
+        {matchData && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Match Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2 text-sm text-neutral-600">
+                <p><span className="font-medium">Match ID:</span> {matchData.id}</p>
+                <p><span className="font-medium">Final Score:</span> {matchData.score1} - {matchData.score2}</p>
+                <p>
+                  <span className="font-medium">Result:</span>{" "}
+                  {matchData.score1 > matchData.score2
+                    ? "Real Madrid wins"
+                    : matchData.score2 > matchData.score1
+                    ? "Barcelona wins"
+                    : "Draw"}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

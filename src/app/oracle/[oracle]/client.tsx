@@ -170,27 +170,6 @@ export default function Client() {
                     {formatTimestamp(oracleData.lastUpdateTime)}
                   </p>
                 </div>
-
-                <div>
-                  <p className="text-sm text-neutral-500">Validation Status</p>
-                  <div className="flex items-center gap-2">
-                    {oracleData.isValidated ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
-                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                        Validated
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700">
-                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                        </svg>
-                        Not Validated
-                      </span>
-                    )}
-                  </div>
-                </div>
               </CardContent>
             </Card>
 
@@ -229,9 +208,14 @@ export default function Client() {
                         <div className="space-y-2">
                           <div>
                             <p className="text-xs text-neutral-500">TX Hash</p>
-                            <p className="font-mono text-xs break-all text-neutral-700">
+                            <a
+                              href={`https://testnet.monadscan.com/address/${oracleAddress}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-mono text-xs break-all text-blue-600 hover:text-blue-800 underline"
+                            >
                               {verification.txHash}
-                            </p>
+                            </a>
                           </div>
                           <div>
                             <p className="text-xs text-neutral-500">Data</p>

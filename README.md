@@ -236,7 +236,6 @@ The platform uses **#836EF9** (purple) as the primary brand color, representing 
 - ✅ Update interval configuration
 - ✅ Dynamic data storage (JSON strings)
 - ✅ Verification history with tx hashes
-- ✅ Validation status
 
 ### Key Functions
 - `updateData(string _newData)` - Update oracle data (master wallet only)
