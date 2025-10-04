@@ -12,12 +12,19 @@ import {
 } from "@/components/ui/card";
 import OracleArtifact from "../../../contracts/artifacts/contracts/Oracle.sol/Oracle.json";
 
+interface Verification {
+  txHash: string;
+  data: string;
+}
+
 interface OracleData {
   createdBy: string;
   apiUrl: string;
   updateInterval: string;
   dynamicData: string;
   lastUpdateTime: bigint;
+  isValidated: boolean;
+  verifications: Verification[];
 }
 
 export default function OracleDetails() {
@@ -48,12 +55,24 @@ export default function OracleDetails() {
         // Get dynamic data
         const data = await contract.getCurrentData();
 
+        // Get validation status
+        const validated = await contract.isValidated();
+
+        // Get verifications
+        const verificationsRaw = await contract.getVerifications();
+        const verifications = verificationsRaw.map((v: any) => ({
+          txHash: v.txHash,
+          data: v.data,
+        }));
+
         setOracleData({
           createdBy: creator,
           apiUrl: url,
           updateInterval: interval,
           dynamicData: data,
           lastUpdateTime: lastUpdate,
+          isValidated: validated,
+          verifications: verifications,
         });
       } catch (err) {
         console.error("Error fetching oracle data:", err);
@@ -165,6 +184,27 @@ export default function OracleDetails() {
                     {formatTimestamp(oracleData.lastUpdateTime)}
                   </p>
                 </div>
+
+                <div>
+                  <p className="text-sm text-neutral-500">Validation Status</p>
+                  <div className="flex items-center gap-2">
+                    {oracleData.isValidated ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        Validated
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700">
+                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                        </svg>
+                        Not Validated
+                      </span>
+                    )}
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
@@ -178,6 +218,48 @@ export default function OracleDetails() {
                     {oracleData.dynamicData || "No data available yet"}
                   </pre>
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Verification History</CardTitle>
+                <p className="text-sm text-neutral-500">
+                  {oracleData.verifications.length} verification{oracleData.verifications.length !== 1 ? 's' : ''}
+                </p>
+              </CardHeader>
+              <CardContent>
+                {oracleData.verifications.length === 0 ? (
+                  <p className="text-sm text-neutral-500">No verifications yet</p>
+                ) : (
+                  <div className="space-y-4">
+                    {oracleData.verifications.map((verification, index) => (
+                      <div key={index} className="rounded-lg border border-neutral-200 p-4">
+                        <div className="mb-2 flex items-center justify-between">
+                          <span className="text-xs font-semibold text-neutral-500">
+                            Verification #{index + 1}
+                          </span>
+                        </div>
+                        <div className="space-y-2">
+                          <div>
+                            <p className="text-xs text-neutral-500">TX Hash</p>
+                            <p className="font-mono text-xs break-all text-neutral-700">
+                              {verification.txHash}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-neutral-500">Data</p>
+                            <div className="rounded bg-neutral-50 p-2">
+                              <pre className="text-xs overflow-x-auto">
+                                {verification.data}
+                              </pre>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
 

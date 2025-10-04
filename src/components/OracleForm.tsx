@@ -87,7 +87,6 @@ export function OracleForm() {
       console.log("Oracle deployed at:", address);
 
       setDeployedAddress(address);
-      alert(`Oracle deployed successfully at: ${address}`);
 
       // Reset form
       setUrl("");
@@ -155,12 +154,12 @@ export function OracleForm() {
                 {deployedAddress}
               </p>
               <a
-                href={`https://testnet.monadscan.com/address/${deployedAddress}`}
+                href={`/${deployedAddress}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-green-700 hover:text-green-800 underline"
               >
-                View on Monad Explorer →
+                View on <b>Monoracle</b> Explorer
               </a>
             </div>
           )}
