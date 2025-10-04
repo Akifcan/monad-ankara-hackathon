@@ -109,6 +109,7 @@ export default function Client() {
   return (
     <div className="min-h-screen bg-neutral-50 p-4 py-12">
       <div className="mx-auto max-w-4xl space-y-6">
+        <img src="/logo.svg" alt="Monoracle Logo" width={300} height={300} />
         {/* Header */}
         <Card>
           <CardHeader>
@@ -292,6 +293,8 @@ export default function Client() {
             </div>
           </>
         )}
+
+        <img src="/logo.svg" alt="Monoracle Logo" width={300} height={300} />
       </div>
     </div>
   );
