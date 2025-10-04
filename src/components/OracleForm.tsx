@@ -154,7 +154,7 @@ export function OracleForm() {
                 {deployedAddress}
               </p>
               <a
-                href={`/${deployedAddress}`}
+                href={`/oracle/${deployedAddress}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-green-700 hover:text-green-800 underline"
